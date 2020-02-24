@@ -1,4 +1,4 @@
-/* PptxGenJS 3.2.0-beta @ 2020-02-13T05:17:34.692Z */
+/* PptxGenJS 3.2.0-beta @ 2020-02-24T16:02:42.110Z */
 import * as JSZip from 'jszip';
 
 /**
@@ -3548,7 +3548,15 @@ function addTableDefinition(target, tableRows, options, slideLayout, presLayout,
     */
     // Calc table width depending upon what data we have - several scenarios exist (including bad data, eg: colW doesnt match col count)
     if (opt.colW) {
-        var firstRowColCnt = arrRows[0].length;
+        var firstRowColCnt = arrRows[0].reduce(function (totalLen, c) {
+            if (c && c.options && c.options.colspan && typeof c.options.colspan === 'number') {
+                totalLen += c.options.colspan;
+            }
+            else {
+                totalLen += 1;
+            }
+            return totalLen;
+        }, 0);
         // Ex: `colW = 3` or `colW = '3'`
         if (typeof opt.colW === 'string' || typeof opt.colW === 'number') {
             opt.w = Math.floor(Number(opt.colW) * firstRowColCnt);
